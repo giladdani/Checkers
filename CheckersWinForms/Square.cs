@@ -10,18 +10,33 @@ namespace CheckersWinForms
 {
     public class Square : Button
     {
+        private Piece m_PiecePointer;
+
         public Square()
         {
             this.SetStyle(ControlStyles.Selectable, false);     //  remove focus border
+            m_PiecePointer = null;
         }
 
-        protected override void OnClick(EventArgs e)
+        public Piece PiecePointer
         {
-            base.OnClick(e);
-            if (this.Enabled)
+            get
             {
-                this.BackColor = Color.LightBlue;
+                return m_PiecePointer;
+            }
+
+            set
+            {
+                m_PiecePointer = value;
             }
         }
+        //protected override void OnClick(EventArgs e)
+        //{
+        //    base.OnClick(e);
+        //    if (this.Enabled)
+        //    {
+        //        this.BackColor = Color.LightBlue;
+        //    }
+        //}
     }
 }

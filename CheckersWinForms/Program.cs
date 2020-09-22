@@ -16,7 +16,7 @@ namespace CheckersWinForms
             GameSettingsForm gameSettingsForm = new GameSettingsForm();
             if (gameSettingsForm.ShowDialog() == DialogResult.OK)
             {
-                BoardForm boardForm = new BoardForm(gameSettingsForm.SelectedBoardSize);
+                BoardForm boardForm = new BoardForm(gameSettingsForm.TextBoxPlayerOneName,gameSettingsForm.TextBoxPlayerTwoName, gameSettingsForm.SelectedBoardSize);
                 boardForm.ShowDialog();
             }
         }

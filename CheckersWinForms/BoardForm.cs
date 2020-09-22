@@ -12,7 +12,7 @@ namespace CheckersWinForms
 {
     public partial class BoardForm : Form
     {
-        public BoardForm(int i_Size)
+        public BoardForm(string i_PlayerOneName, string i_PlayerTwoName, int i_Size)
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedDialog; // hide window resizing
@@ -22,7 +22,6 @@ namespace CheckersWinForms
         private void generateButtonMatrix(int i_Size)
         {
             Square[,] squareMatrix = new Square[i_Size, i_Size];
-
             for (int y = 0; y < i_Size; y++)
             {
                 for (int x = 0; x < i_Size; x++)
@@ -31,12 +30,20 @@ namespace CheckersWinForms
                     if ((x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0))
                     {
                         //squareMatrix[y, x].Click += SquareClicked;
-                        squareMatrix[y, x].BackColor = Color.DimGray;
+                        squareMatrix[y, x].BackColor = Color.White;
+                        if ( x < i_Size/2-1)
+                        {
+                            squareMatrix[y, x].Text = "O";
+                        }
+                        if (x > i_Size - i_Size/2 )
+                        {
+                            squareMatrix[y, x].Text = "X";
+                        }
                     }
                     else
                     {
                         squareMatrix[y, x].Enabled = false;
-                        squareMatrix[y, x].BackColor = Color.White;
+                        squareMatrix[y, x].BackColor = Color.DimGray;
                     }
 
                     this.Controls.Add(squareMatrix[y, x]);
@@ -49,14 +56,14 @@ namespace CheckersWinForms
             this.label2.Left = this.Width - 175;
         }
 
-        //private void SquareClicked(object sender, EventArgs e)
-        //{
-        //    Button clickedSquare = sender as Button;
-        //    if(clickedSquare.Enabled == true) // playable square
-        //    {
-        //        // if has a piece and its the players turn
-        //        clickedSquare.BackColor = Color.Cyan;
-        //    }
-        //}
+        private void SquareClicked(object sender, EventArgs e)
+        {
+            Button clickedSquare = sender as Button;
+            if (clickedSquare.Enabled == true) // playable square
+            {
+                // if has a piece and its the players turn
+                clickedSquare.BackColor = Color.Cyan;
+            }
+        }
     }
 }
