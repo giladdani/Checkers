@@ -12,13 +12,11 @@ namespace CheckersWinForms
     {
         public static void Main()
         {
+
             Application.EnableVisualStyles();       // just for aesthetics
-            GameSettingsForm gameSettingsForm = new GameSettingsForm();
-            if (gameSettingsForm.ShowDialog() == DialogResult.OK)
-            {
-                BoardForm boardForm = new BoardForm(gameSettingsForm.SelectedBoardSize);
-                boardForm.ShowDialog();
-            }
+            WinFormsUi ui = new WinFormsUi();
+            gameInterface.CreateGame();
+            gameInterface.StartRound();
         }
     }
 }

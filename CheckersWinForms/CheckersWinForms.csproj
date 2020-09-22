@@ -45,6 +45,7 @@
     <Compile Include="BoardForm.Designer.cs">
       <DependentUpon>BoardForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Game.cs" />
     <Compile Include="GameSettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -55,6 +56,7 @@
     <Compile Include="Square.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="WinFormsUi.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -62,6 +64,11 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BoardForm.resx">
+      <DependentUpon>BoardForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

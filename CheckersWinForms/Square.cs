@@ -15,13 +15,13 @@ namespace CheckersWinForms
             this.SetStyle(ControlStyles.Selectable, false);     //  remove focus border
         }
 
-        protected override void OnClick(EventArgs e)
-        {
-            base.OnClick(e);
-            if (this.Enabled)
-            {
-                this.BackColor = Color.LightBlue;
-            }
-        }
+        //protected override void OnClick(EventArgs e)
+        //{
+        //    //base.OnClick(e);
+        //    if (this.Enabled)
+        //    {
+        //        this.BackColor = Color.LightBlue;
+        //    }
+        //}
     }
 }
