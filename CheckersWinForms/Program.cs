@@ -12,11 +12,10 @@ namespace CheckersWinForms
     {
         public static void Main()
         {
-
             Application.EnableVisualStyles();       // just for aesthetics
-            WinFormsUi ui = new WinFormsUi();
-            gameInterface.CreateGame();
-            gameInterface.StartRound();
+            WinFormsUiManager ui = new WinFormsUiManager();
+            ui.CreateGame();
+            ui.StartGame();
         }
     }
 }

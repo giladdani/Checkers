@@ -5,10 +5,12 @@ namespace CheckersWinForms
 {
     public class Game
     {
+        // Events
+        public event Action<eMoveFeedback> MoveExecuted;
+
         // Private Members
         private Player m_PlayerOne;
         private Player m_PlayerTwo;
-        private Player m_LastPlayer;
         private Board m_Board;
         private bool m_AiMode;
         private int m_TurnCount;
@@ -33,7 +35,7 @@ namespace CheckersWinForms
         }
 
         // Execute the given move, returns true if it was executed successfully
-        public eMoveFeedback ExecuteMove(Move i_Move)
+        public void ExecuteMove(Move i_Move)
         {
             eMoveFeedback moveFeedback = eMoveFeedback.Failed;
 
@@ -60,16 +62,12 @@ namespace CheckersWinForms
                                 {
                                     m_Board.makeMove(CurrentPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
                                     moveFeedback = eMoveFeedback.Success;
-                                    m_LastPlayer = CurrentPlayer;
-                                    m_TurnCount++;
                                 }
                             }
                             else
                             {
                                 m_Board.makeMove(CurrentPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
                                 moveFeedback = eMoveFeedback.Success;
-                                m_LastPlayer = CurrentPlayer;
-                                m_TurnCount++;
                             }
                         }
                     }
@@ -82,12 +80,8 @@ namespace CheckersWinForms
                         // check double capture option
                         if (MoveValidator.isCapturePossiblePerPiece(CurrentPlayer, m_Board, m_Board.GameBoard[i_Move.XTo, i_Move.YTo].PiecePointer))
                         {
-                            TurnCount--;
                             moveFeedback = eMoveFeedback.CanDoubleCapture;
                         }
-
-                        m_LastPlayer = CurrentPlayer;
-                        m_TurnCount++;
                     }
                 }
             }
@@ -96,14 +90,19 @@ namespace CheckersWinForms
                 moveFeedback = eMoveFeedback.Quit;
             }
 
-            return moveFeedback;
+            if(moveFeedback == eMoveFeedback.Success)
+            {
+                m_TurnCount++;
+            }
+
+            MoveExecuted?.Invoke(moveFeedback);
         }
 
         // Returns true if the game is over
         public bool IsOver()
         {
             // If a player has no pieces left
-            bool isOver = (m_PlayerOne.Pieces.Count == 0 || m_PlayerTwo.Pieces.Count == 0) && m_TurnCount > 1;
+            bool isOver = (m_PlayerOne.Pieces.Count == 0 || m_PlayerTwo.Pieces.Count == 0) && m_TurnCount > 0;
 
             // If current player has no moves to play
             if (!CurrentPlayer.HasPossibleMoves(m_Board))
@@ -170,14 +169,6 @@ namespace CheckersWinForms
                 }
 
                 return player;
-            }
-        }
-
-        public Player LastPlayer
-        {
-            get
-            {
-                return m_LastPlayer;
             }
         }
 

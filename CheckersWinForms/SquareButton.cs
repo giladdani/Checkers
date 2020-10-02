@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,42 +7,31 @@ using System.Windows.Forms;
 
 namespace CheckersWinForms
 {
-    public class Square
+    public class SquareButton : Button
     {
         // Events
-        public event Action<Square> CurrentPieceChanged;
+        public event Action<SquareButton> SquareClicked;
 
         // Private Members
-        private Piece m_PiecePointer;
         private int m_MatrixRowIndex;
         private int m_MatrixColIndex;
+        private string m_LocationChars;
 
         // Constructors
-        public Square(int i_Row, int i_Col)
+        public SquareButton(int i_Row, int i_Col)
         {
             m_MatrixRowIndex = i_Row;
             m_MatrixColIndex = i_Col;
-            PiecePointer = null;
+            m_LocationChars = MoveValidator.ConvertLocationToString(i_Row, i_Col);
+        }
+
+        // Event Handlers
+        protected override void OnClick(EventArgs e)
+        {
+            SquareClicked.Invoke(this);
         }
 
         // Properties
-        public Piece PiecePointer
-        {
-            get
-            {
-                return m_PiecePointer;
-            }
-
-            set
-            {
-                m_PiecePointer = value;
-                if(CurrentPieceChanged != null)
-                {
-                    CurrentPieceChanged.Invoke(this);
-                }
-            }
-        }
-
         public int RowIndex
         {
             get
@@ -67,6 +55,19 @@ namespace CheckersWinForms
             set
             {
                 m_MatrixColIndex = value;
+            }
+        }
+
+        public string LocationChars
+        {
+            get
+            {
+                return m_LocationChars;
+            }
+
+            set
+            {
+                m_LocationChars = value;
             }
         }
     }

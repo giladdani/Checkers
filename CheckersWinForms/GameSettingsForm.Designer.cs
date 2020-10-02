@@ -2,7 +2,7 @@
 
 namespace CheckersWinForms
 {
-    partial class GameSettingsForm
+    public partial class GameSettingsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -19,6 +19,7 @@ namespace CheckersWinForms
             {
                 components.Dispose();
             }
+
             base.Dispose(disposing);
         }
 
@@ -45,6 +46,7 @@ namespace CheckersWinForms
             // m_ButtonDone
             // 
             this.m_ButtonDone.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.m_ButtonDone.Enabled = false;
             this.m_ButtonDone.Location = new System.Drawing.Point(222, 210);
             this.m_ButtonDone.Name = "m_ButtonDone";
             this.m_ButtonDone.Size = new System.Drawing.Size(98, 31);
@@ -76,6 +78,7 @@ namespace CheckersWinForms
             this.m_TextBoxPlayerOneName.Name = "m_TextBoxPlayerOneName";
             this.m_TextBoxPlayerOneName.Size = new System.Drawing.Size(100, 22);
             this.m_TextBoxPlayerOneName.TabIndex = 5;
+            this.m_TextBoxPlayerOneName.TextChanged += new System.EventHandler(this.m_TextBoxPlayerOneName_TextChanged);
             // 
             // m_TextBoxPlayerTwoName
             // 

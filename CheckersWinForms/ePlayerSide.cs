@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace CheckersWinForms
 {
-    public class WinFormsUi
+    public enum ePlayerSide
     {
-        // Private Members
-        private GameSettingsForm m_GameSettingsForm;
-        private BoardForm m_Board;
-
+        Up = 1,
+        Down = 2
     }
 }

@@ -39,12 +39,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Board.cs" />
     <Compile Include="BoardForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="BoardForm.Designer.cs">
       <DependentUpon>BoardForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="eMoveFeedBack.cs" />
+    <Compile Include="ePlayerMoves.cs" />
+    <Compile Include="ePlayerSide.cs" />
+    <Compile Include="eRoundResult.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameSettingsForm.cs">
       <SubType>Form</SubType>
@@ -52,22 +57,34 @@
     <Compile Include="GameSettingsForm.Designer.cs">
       <DependentUpon>GameSettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Move.cs" />
+    <Compile Include="MoveValidator.cs" />
+    <Compile Include="Piece.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Square.cs">
+    <Compile Include="Square.cs" />
+    <Compile Include="SquareButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="WinFormsUi.cs" />
+    <Compile Include="WinFormsUiManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BoardForm.resx">
       <DependentUpon>BoardForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GameSettingsForm.resx">
+      <DependentUpon>GameSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

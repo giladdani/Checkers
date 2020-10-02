@@ -19,7 +19,34 @@ namespace CheckersWinForms
             InitializeComponent();
         }
 
+        // Event Handlers
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            m_TextBoxPlayerTwoName.Enabled = m_CheckBoxPlayer2.Checked;
+        }
+
+        private void m_TextBoxPlayerOneName_TextChanged(object sender, EventArgs e)
+        {
+            m_ButtonDone.Enabled = m_TextBoxPlayerOneName.Text.Length > 0;
+        }
+       
         // Properties
+        public string TextBoxPlayerOneName
+        {
+            get
+            {
+                return m_TextBoxPlayerOneName.Text;
+            }
+        }
+
+        public string TextBoxPlayerTwoName
+        {
+            get
+            {
+                return m_TextBoxPlayerTwoName.Text;
+            }
+        }
+
         public int SelectedBoardSize
         {
             get
@@ -39,17 +66,11 @@ namespace CheckersWinForms
             }
         }
 
-        // Events
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            m_TextBoxPlayerTwoName.Enabled = m_CheckBoxPlayer2.Checked;
-        }
-
-        public string PlayerOneName
+        public bool AiMode
         {
             get
             {
-                return m_TextBoxPlayerOneName.Text;
+                return m_CheckBoxPlayer2.Enabled;
             }
         }
     }
