@@ -76,23 +76,23 @@ namespace CheckersWinForms
         {
             if (MoveValidator.IsSimpleMove(i_Player, i_Board, new Move(this.Location.Y, this.Location.X, this.Location.Y + 1, this.Location.X + 1)))
             {
-                i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y + 1, this.Location.X - 1));
+                i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y + 1, this.Location.X + 1));
             }
 
             if (MoveValidator.IsSimpleMove(i_Player, i_Board, new Move(this.Location.Y, this.Location.X, this.Location.Y - 1, this.Location.X + 1)))
             {
-                i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y - 1, this.Location.X - 1));
+                i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y - 1, this.Location.X + 1));
             }
 
             if (checkKingCapture(i_Board, -1, new Move(this.Location.Y, this.Location.X, this.Location.Y - 2, this.Location.X + 2)))
             {
-                i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y - 2, this.Location.X - 2));
+                i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y - 2, this.Location.X + 2));
                 capturePossible = true;
             }
 
             if (checkKingCapture(i_Board, 1, new Move(this.Location.Y, this.Location.X, this.Location.Y + 2, this.Location.X + 2)))
             {
-                i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y + 2, this.Location.X - 2));
+                i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y + 2, this.Location.X + 2));
                 capturePossible = true;
             }
         }
@@ -127,9 +127,12 @@ namespace CheckersWinForms
             {
                 if (i_Board.GameBoard[i_Move.XTo, i_Move.YTo].PiecePointer == null)
                 {
-                    if (i_Board.GameBoard[i_Move.XFrom + 1, i_Move.YFrom + i_Direction].PiecePointer.Side == MoveValidator.GetOtherSide(this.Side))
+                    if(i_Board.GameBoard[i_Move.XFrom + 1, i_Move.YFrom + i_Direction].PiecePointer != null)
                     {
-                        captureMove = true;
+                        if (i_Board.GameBoard[i_Move.XFrom + 1, i_Move.YFrom + i_Direction].PiecePointer.Side == MoveValidator.GetOtherSide(this.Side))
+                        {
+                            captureMove = true;
+                        }
                     }
                 }
             }

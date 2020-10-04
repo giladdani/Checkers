@@ -217,7 +217,7 @@ namespace CheckersWinForms
             Piece currentPiece = i_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer;
             Piece pieceToBeEaten = i_Board.GameBoard[(i_Move.XFrom + i_Move.XTo) / 2, (i_Move.YFrom + i_Move.YTo) / 2].PiecePointer;
 
-            if (currentPiece != null)
+            if (currentPiece != null && IsInBorders(i_Board, i_Move.XTo, i_Move.YTo))
             {
                 // is destination empty
                 if (i_Board.GameBoard[i_Move.XTo, i_Move.YTo].PiecePointer == null)

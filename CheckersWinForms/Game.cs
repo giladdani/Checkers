@@ -18,6 +18,11 @@ namespace CheckersWinForms
         // Constructors
         public Game(string i_PlayerOneName, string i_PlayerTwoName, int i_BoardSize, bool i_AiMode)
         {
+            if(i_AiMode)
+            {
+                i_PlayerTwoName = "Computer";
+            }
+
             m_PlayerOne = new Player(i_PlayerOneName, ePlayerSide.Up, i_BoardSize, false);
             m_PlayerTwo = new Player(i_PlayerTwoName, ePlayerSide.Down, i_BoardSize, i_AiMode);
             m_Board = new Board(i_BoardSize);
@@ -39,30 +44,22 @@ namespace CheckersWinForms
         {
             eMoveFeedback moveFeedback = eMoveFeedback.Failed;
 
-            if (!i_Move.IsQuit)
+            if (m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer != null)
             {
-                if (m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer != null)
+                // simple move
+                if (MoveValidator.IsSimpleMove(CurrentPlayer, m_Board, i_Move))
                 {
-                    // simple move
-                    if (MoveValidator.IsSimpleMove(CurrentPlayer, m_Board, i_Move))
+                    if (MoveValidator.IsPlayerHasCapture(CurrentPlayer, m_Board))
                     {
-                        if (MoveValidator.IsPlayerHasCapture(CurrentPlayer, m_Board))
+                        moveFeedback = eMoveFeedback.FailedCouldCapture;
+                    }
+                    else
+                    {
+                        if (m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer.IsKing == false)
                         {
-                            moveFeedback = eMoveFeedback.FailedCouldCapture;
-                        }
-                        else
-                        {
-                            if (m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer.IsKing == false)
+                            if ((CurrentPlayer.Side == ePlayerSide.Down && i_Move.XFrom < i_Move.XTo) || (CurrentPlayer.Side == ePlayerSide.Up && i_Move.XFrom > i_Move.XTo))
                             {
-                                if ((CurrentPlayer.Side == ePlayerSide.Down && i_Move.XFrom < i_Move.XTo) || (CurrentPlayer.Side == ePlayerSide.Up && i_Move.XFrom > i_Move.XTo))
-                                {
-                                    moveFeedback = eMoveFeedback.Failed;
-                                }
-                                else
-                                {
-                                    m_Board.makeMove(CurrentPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
-                                    moveFeedback = eMoveFeedback.Success;
-                                }
+                                moveFeedback = eMoveFeedback.Failed;
                             }
                             else
                             {
@@ -70,24 +67,25 @@ namespace CheckersWinForms
                                 moveFeedback = eMoveFeedback.Success;
                             }
                         }
-                    }
-                    else if (MoveValidator.IsCaptureMovePossible(CurrentPlayer, m_Board, i_Move))
-                    {
-                        Player enemyPlayer = CurrentPlayer == PlayerOne ? PlayerTwo : PlayerOne;
-                        m_Board.MakeCaptureMove(enemyPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
-                        moveFeedback = eMoveFeedback.Success;
-
-                        // check double capture option
-                        if (MoveValidator.isCapturePossiblePerPiece(CurrentPlayer, m_Board, m_Board.GameBoard[i_Move.XTo, i_Move.YTo].PiecePointer))
+                        else
                         {
-                            moveFeedback = eMoveFeedback.CanDoubleCapture;
+                            m_Board.makeMove(CurrentPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
+                            moveFeedback = eMoveFeedback.Success;
                         }
                     }
                 }
-            }
-            else
-            {
-                moveFeedback = eMoveFeedback.Quit;
+                else if (MoveValidator.IsCaptureMovePossible(CurrentPlayer, m_Board, i_Move))
+                {
+                    Player enemyPlayer = CurrentPlayer == PlayerOne ? PlayerTwo : PlayerOne;
+                    m_Board.MakeCaptureMove(enemyPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
+                    moveFeedback = eMoveFeedback.Success;
+
+                    // check double capture option
+                    if (MoveValidator.isCapturePossiblePerPiece(CurrentPlayer, m_Board, m_Board.GameBoard[i_Move.XTo, i_Move.YTo].PiecePointer))
+                    {
+                        moveFeedback = eMoveFeedback.CanDoubleCapture;
+                    }
+                }
             }
 
             if(moveFeedback == eMoveFeedback.Success)

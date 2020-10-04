@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CheckersWinForms
@@ -26,7 +21,7 @@ namespace CheckersWinForms
         public BoardForm(Game i_Game)
         {
             InitializeComponent();
-            this.FormBorderStyle = FormBorderStyle.FixedDialog; // hide window resizing
+            this.FormBorderStyle = FormBorderStyle.FixedDialog; // disable window resizing
             m_Game = i_Game;
             initBoardSettings(m_Game.Board);
             ResetBoardSettings(m_Game.Board);
@@ -35,7 +30,7 @@ namespace CheckersWinForms
         }
 
         // Private Methods
-        public void initBoardSettings(Board i_Board)
+        private void initBoardSettings(Board i_Board)
         {
             m_SquareButtons = new SquareButton[i_Board.Size, i_Board.Size];
             for (int row = 0; row < i_Board.Size; row++)

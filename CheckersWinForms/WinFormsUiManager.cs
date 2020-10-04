@@ -1,31 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 
 namespace CheckersWinForms
 {
     public class WinFormsUiManager
     {
         // Private Members
-        private static Timer s_AiThinkingTimer;
+        private Timer m_AiThinkingTimer;
         private GameSettingsForm m_GameSettingsForm;
         private BoardForm m_BoardForm;
         private Game m_Game;
 
-        // Constructors
-        public WinFormsUiManager()
-        {
-            m_GameSettingsForm = new GameSettingsForm();
-        }
-
         // Public Methods
         public void CreateGame()
         {
+            m_GameSettingsForm = new GameSettingsForm();
             if (m_GameSettingsForm.ShowDialog() == DialogResult.OK)
             {
                 string playerOneName = m_GameSettingsForm.TextBoxPlayerOneName;
@@ -44,8 +33,8 @@ namespace CheckersWinForms
             m_BoardForm = new BoardForm(m_Game);
             if(m_Game.AiMode)
             {
-                s_AiThinkingTimer = new Timer { Interval = 1000 };
-                s_AiThinkingTimer.Tick += playAiTurn;
+                m_AiThinkingTimer = new Timer { Interval = 1200 };
+                m_AiThinkingTimer.Tick += playAiTurn;
             }
 
             m_BoardForm.ShowDialog();
@@ -53,7 +42,7 @@ namespace CheckersWinForms
 
         private void playAiTurn(object i_Sender, EventArgs i_E)
         {
-            s_AiThinkingTimer.Stop();
+            m_AiThinkingTimer.Stop();
             Move move = m_Game.PlayerTwo.GenerateRandomMove(m_Game.Board);
             m_Game.ExecuteMove(move);
         }
@@ -75,11 +64,16 @@ namespace CheckersWinForms
             {
                 resetRound();
             }
+            else
+            {
+                Environment.Exit(-1);
+            }
         }
 
         private bool playAgain()
         {
             string roundResults;
+
             if(m_Game.PlayerOne.TotalScore > m_Game.PlayerTwo.TotalScore)
             {
                 roundResults = string.Format("{0} Won!", m_Game.PlayerOne.Name);
@@ -105,22 +99,6 @@ namespace CheckersWinForms
         {
             switch (i_MoveFeedback)
             {
-                case eMoveFeedback.Success:
-                    {
-                        m_BoardForm.HighlightCurrentPlayerLabel();
-                        if (m_Game.IsOver())
-                        {
-                            endRound();
-                        }
-
-                        if(m_Game.CurrentPlayer.IsAi)
-                        {
-                            s_AiThinkingTimer.Start();
-                        }
-
-                        break;
-                    }
-
                 case eMoveFeedback.Failed:
                     {
                         MessageBox.Show("Invalid move.");
@@ -133,9 +111,19 @@ namespace CheckersWinForms
                         break;
                     }
 
-                case eMoveFeedback.Quit:
+                default:
                     {
-                        endRound();
+                        m_BoardForm.HighlightCurrentPlayerLabel();
+                        if (m_Game.IsOver())
+                        {
+                            endRound();
+                        }
+
+                        if (m_Game.CurrentPlayer.IsAi)
+                        {
+                            m_AiThinkingTimer.Start();
+                        }
+
                         break;
                     }
             }

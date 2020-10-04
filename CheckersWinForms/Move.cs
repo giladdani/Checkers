@@ -10,7 +10,6 @@ namespace CheckersWinForms
         private int m_YFrom;
         private int m_XTo;
         private int m_YTo;
-        private bool m_IsQuit;
 
         // Constructors
         public Move()
@@ -27,17 +26,10 @@ namespace CheckersWinForms
 
         public Move(string i_Move)
         {
-            if (i_Move[0] == 'Q')
-            {
-                m_IsQuit = true;
-            }
-            else
-            {
-                m_YFrom = i_Move[0] - 'A';
-                m_XFrom = i_Move[1] - 'a';
-                m_YTo = i_Move[3] - 'A';
-                m_XTo = i_Move[4] - 'a';
-            }
+            m_YFrom = i_Move[0] - 'A';
+            m_XFrom = i_Move[1] - 'a';
+            m_YTo = i_Move[3] - 'A';
+            m_XTo = i_Move[4] - 'a';
         }
 
         // Properties
@@ -90,19 +82,6 @@ namespace CheckersWinForms
             set
             {
                 m_YTo = value;
-            }
-        }
-
-        public bool IsQuit
-        {
-            get
-            {
-                return m_IsQuit;
-            }
-
-            set
-            {
-                m_IsQuit = value;
             }
         }
     }

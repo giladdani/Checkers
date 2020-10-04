@@ -12,6 +12,5 @@ namespace CheckersWinForms
         CanDoubleCapture = 2,
         FailedCouldCapture = 3,
         Failed = 4,
-        Quit = 5
     }
 }
