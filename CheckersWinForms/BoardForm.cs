@@ -25,7 +25,7 @@ namespace CheckersWinForms
             m_Game = i_Game;
             initBoardSettings(m_Game.Board);
             ResetBoardSettings(m_Game.Board);
-            UpdatePlayersNames();
+            UpdatePlayersNamesAndScores();
             m_CurrentMove = new StringBuilder();
         }
 
@@ -71,7 +71,7 @@ namespace CheckersWinForms
             }
         }
 
-        public void UpdatePlayersNames()
+        public void UpdatePlayersNamesAndScores()
         {
             this.LabelPlayerOneName.Text = string.Format(
                 "{0}({1}): {2}",

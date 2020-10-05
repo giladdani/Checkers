@@ -31,7 +31,7 @@ namespace CheckersWinForms
             m_Game.SetPiecesStartingPositions();
             m_Game.MoveExecuted += AnalyzeMoveFeedback;
             m_BoardForm = new BoardForm(m_Game);
-            if(m_Game.AiMode)
+            if(m_Game.AiMode == true)
             {
                 m_AiThinkingTimer = new Timer { Interval = 1200 };
                 m_AiThinkingTimer.Tick += playAiTurn;
@@ -59,8 +59,8 @@ namespace CheckersWinForms
         public void endRound()
         {
             m_Game.CalculateScores();
-            m_BoardForm.UpdatePlayersNames();
-            if (playAgain())
+            m_BoardForm.UpdatePlayersNamesAndScores();
+            if (playAgain() == true)
             {
                 resetRound();
             }
