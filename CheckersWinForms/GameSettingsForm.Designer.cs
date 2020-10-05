@@ -88,6 +88,7 @@ namespace CheckersWinForms
             this.m_TextBoxPlayerTwoName.Size = new System.Drawing.Size(100, 22);
             this.m_TextBoxPlayerTwoName.TabIndex = 6;
             this.m_TextBoxPlayerTwoName.Text = "Computer";
+            this.m_TextBoxPlayerTwoName.TextChanged += new System.EventHandler(this.m_TextBoxPlayerTwoName_TextChanged);
             // 
             // m_CheckBoxPlayer2
             // 

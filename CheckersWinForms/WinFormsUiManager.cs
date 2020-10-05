@@ -20,7 +20,7 @@ namespace CheckersWinForms
                 string playerOneName = m_GameSettingsForm.TextBoxPlayerOneName;
                 string playerTwoName = m_GameSettingsForm.TextBoxPlayerTwoName;
 
-                m_Game = new Game(playerOneName, playerTwoName, m_GameSettingsForm.SelectedBoardSize, m_GameSettingsForm.AiMode);
+                m_Game = new Game(playerOneName, playerTwoName, m_GameSettingsForm.SelectedBoardSize, m_GameSettingsForm.TwoPlayersMode);
             }
         }
 
@@ -31,7 +31,7 @@ namespace CheckersWinForms
             m_Game.SetPiecesStartingPositions();
             m_Game.MoveExecuted += AnalyzeMoveFeedback;
             m_BoardForm = new BoardForm(m_Game);
-            if(m_Game.AiMode == true)
+            if (m_Game.AiMode == true)
             {
                 m_AiThinkingTimer = new Timer { Interval = 1200 };
                 m_AiThinkingTimer.Tick += playAiTurn;
@@ -74,11 +74,11 @@ namespace CheckersWinForms
         {
             string roundResults;
 
-            if(m_Game.PlayerOne.TotalScore > m_Game.PlayerTwo.TotalScore)
+            if (m_Game.PlayerOne.TotalScore > m_Game.PlayerTwo.TotalScore)
             {
                 roundResults = string.Format("{0} Won!", m_Game.PlayerOne.Name);
             }
-            else if(m_Game.PlayerOne.TotalScore < m_Game.PlayerTwo.TotalScore)
+            else if (m_Game.PlayerOne.TotalScore < m_Game.PlayerTwo.TotalScore)
             {
                 roundResults = string.Format("{0} Won!", m_Game.PlayerTwo.Name);
             }
@@ -90,7 +90,7 @@ namespace CheckersWinForms
             string roundResultsMessage = string.Format("{0}{1}Another Round?", roundResults, Environment.NewLine);
             DialogResult playAgainDialogResult = MessageBox.Show(roundResultsMessage, "Round ended", MessageBoxButtons.YesNo);
             bool isPlayAgain = playAgainDialogResult == DialogResult.Yes;
-            
+
             return isPlayAgain;
         }
 

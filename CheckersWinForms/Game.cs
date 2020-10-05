@@ -16,17 +16,17 @@ namespace CheckersWinForms
         private int m_TurnCount;
 
         // Constructors
-        public Game(string i_PlayerOneName, string i_PlayerTwoName, int i_BoardSize, bool i_AiMode)
+        public Game(string i_PlayerOneName, string i_PlayerTwoName, int i_BoardSize, bool i_TwoPlayersMode)
         {
-            if(i_AiMode)
+            if (i_TwoPlayersMode == false)
             {
                 i_PlayerTwoName = "Computer";
+                m_AiMode = true;
             }
 
             m_PlayerOne = new Player(i_PlayerOneName, ePlayerSide.Up, i_BoardSize, false);
-            m_PlayerTwo = new Player(i_PlayerTwoName, ePlayerSide.Down, i_BoardSize, i_AiMode);
+            m_PlayerTwo = new Player(i_PlayerTwoName, ePlayerSide.Down, i_BoardSize, m_AiMode);
             m_Board = new Board(i_BoardSize);
-            m_AiMode = i_AiMode;
         }
 
         // Public Methods
@@ -63,13 +63,13 @@ namespace CheckersWinForms
                             }
                             else
                             {
-                                m_Board.makeMove(CurrentPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
+                                m_Board.MakeMove(CurrentPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
                                 moveFeedback = eMoveFeedback.Success;
                             }
                         }
                         else
                         {
-                            m_Board.makeMove(CurrentPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
+                            m_Board.MakeMove(CurrentPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
                             moveFeedback = eMoveFeedback.Success;
                         }
                     }
@@ -88,7 +88,7 @@ namespace CheckersWinForms
                 }
             }
 
-            if(moveFeedback == eMoveFeedback.Success)
+            if (moveFeedback == eMoveFeedback.Success)
             {
                 m_TurnCount++;
             }

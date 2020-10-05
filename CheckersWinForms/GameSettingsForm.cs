@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CheckersWinForms
@@ -19,17 +12,41 @@ namespace CheckersWinForms
             InitializeComponent();
         }
 
+        // Private Methods
+        private bool isFormValid()
+        {
+            bool isValid = true;
+
+            if (m_TextBoxPlayerOneName.Text.Length == 0)
+            {
+                isValid = false;
+            }
+
+            if (m_TextBoxPlayerTwoName.Text.Length == 0 && m_CheckBoxPlayer2.CheckState == CheckState.Checked)
+            {
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
         // Event Handlers
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             m_TextBoxPlayerTwoName.Enabled = m_CheckBoxPlayer2.Checked;
+            m_ButtonDone.Enabled = isFormValid();
         }
 
         private void m_TextBoxPlayerOneName_TextChanged(object sender, EventArgs e)
         {
-            m_ButtonDone.Enabled = m_TextBoxPlayerOneName.Text.Length > 0;
+            m_ButtonDone.Enabled = isFormValid();
         }
-       
+
+        private void m_TextBoxPlayerTwoName_TextChanged(object sender, EventArgs e)
+        {
+            m_ButtonDone.Enabled = m_TextBoxPlayerTwoName.Text.Length > 0;
+        }
+
         // Properties
         public string TextBoxPlayerOneName
         {
@@ -66,11 +83,11 @@ namespace CheckersWinForms
             }
         }
 
-        public bool AiMode
+        public bool TwoPlayersMode
         {
             get
             {
-                return m_CheckBoxPlayer2.Enabled;
+                return m_CheckBoxPlayer2.CheckState == CheckState.Checked;
             }
         }
     }

@@ -110,9 +110,9 @@ namespace CheckersWinForms
             string currentSquareLocationString;
             Piece pieceAtSquare = m_Game.Board.GameBoard[i_SquareButton.RowIndex, i_SquareButton.ColIndex].PiecePointer;
 
-            if(m_CurrentMove.ToString() == string.Empty && pieceAtSquare != null)
+            if (m_CurrentMove.ToString() == string.Empty && pieceAtSquare != null)
             {
-                if(pieceAtSquare.Side == m_Game.CurrentPlayer.Side)
+                if (pieceAtSquare.Side == m_Game.CurrentPlayer.Side)
                 {
                     i_SquareButton.BackColor = Color.Cyan;
                     currentSquareLocationString = MoveValidator.ConvertLocationToString(
@@ -134,7 +134,7 @@ namespace CheckersWinForms
                 m_Game.ExecuteMove(selectedMove);
                 m_CurrentMove.Clear();
             }
-            else if(pieceAtSquare != null && pieceAtSquare == m_Game.Board.GameBoard[m_SelectedSquare.RowIndex, m_SelectedSquare.ColIndex].PiecePointer)
+            else if (pieceAtSquare != null && pieceAtSquare == m_Game.Board.GameBoard[m_SelectedSquare.RowIndex, m_SelectedSquare.ColIndex].PiecePointer)
             {
                 m_SelectedSquare.BackColor = Color.White;
                 m_SelectedSquare = null;
@@ -147,9 +147,9 @@ namespace CheckersWinForms
             int row = i_SquareToUpdate.RowIndex;
             int col = i_SquareToUpdate.ColIndex;
             Piece pieceAtSquare = m_Game.Board.GameBoard[row, col].PiecePointer;
-            if(pieceAtSquare != null)
+            if (pieceAtSquare != null)
             {
-                if(pieceAtSquare.IsKing)
+                if (pieceAtSquare.IsKing)
                 {
                     m_SquareButtons[row, col].Text =
                         pieceAtSquare.Side == ePlayerSide.Up ? k_TopPlayerKingSign : k_BottomPlayerKingSign;
