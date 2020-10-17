@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.InteropServices;
 
 namespace CheckersWinForms
 {
@@ -10,14 +8,12 @@ namespace CheckersWinForms
         // Private Members
         private readonly ePlayerSide r_Side;
         private bool m_IsKing;
-        private bool m_IsCaptured;
         private Point m_Location;
 
         // Constructors
         public Piece(Point i_Location, ePlayerSide i_Side)
         {
             m_IsKing = false;
-            m_IsCaptured = false;
             m_Location = i_Location;
             r_Side = i_Side;
         }
@@ -25,20 +21,18 @@ namespace CheckersWinForms
         // Public Methods
         public bool HasPossibleMoves(Player i_Player, Board i_CurrentBoard)
         {
-            return MoveValidator.IsPieceHavePossibleMove(i_Player, i_CurrentBoard, this);
+            return MoveValidator.IsPieceHaveMoves(i_CurrentBoard, this);
         }
 
-        public List<Move> GetAvailableMovesList(Player i_Player, Board i_Board, ref bool capturePossible)
+        // Returns a list of all possible moves
+        public List<Move> GetPossibleMovesList(Player i_Player, Board i_Board, ref bool capturePossible)
         {
             List<Move> movesList = new List<Move>();
 
-            if (MoveValidator.IsPieceHavePossibleMove(i_Player, i_Board, this))
+            if (MoveValidator.IsPieceHaveMoves(i_Board, this))
             {
-                if (!this.IsKing)
-                {
-                    addNotKingsMovesToList(i_Player, i_Board, movesList, ref capturePossible);
-                }
-                else
+                addNonKingsMovesToList(i_Player, i_Board, movesList, ref capturePossible);
+                if (this.IsKing)
                 {
                     addKingsMovesToList(i_Player, i_Board, movesList, ref capturePossible);
                 }
@@ -47,7 +41,8 @@ namespace CheckersWinForms
             return movesList;
         }
 
-        private void addNotKingsMovesToList(Player i_Player, Board i_Board, List<Move> i_MovesList, ref bool capturePossible)
+        // Adds all possible non-king moves to the given moves list
+        private void addNonKingsMovesToList(Player i_Player, Board i_Board, List<Move> i_MovesList, ref bool capturePossible)
         {
             if (MoveValidator.IsSimpleMove(i_Player, i_Board, new Move(this.Location.Y, this.Location.X, this.Location.Y + 1, this.Location.X - 1)))
             {
@@ -72,6 +67,7 @@ namespace CheckersWinForms
             }
         }
 
+        // Adds all possible king moves to the given moves list
         private void addKingsMovesToList(Player i_Player, Board i_Board, List<Move> i_MovesList, ref bool capturePossible)
         {
             if (MoveValidator.IsSimpleMove(i_Player, i_Board, new Move(this.Location.Y, this.Location.X, this.Location.Y + 1, this.Location.X + 1)))
@@ -97,39 +93,40 @@ namespace CheckersWinForms
             }
         }
 
+        // Returns true if the given move is a capture move
         private bool checkCapture(Board i_Board, int i_Direction, Move i_Move)
         {
-            bool captureMove = false;
-            if (MoveValidator.IsInBorders(i_Board, i_Move.XTo, i_Move.YTo))
+            // check if destinations is in board's borders
+            if (MoveValidator.IsInBorders(i_Board, i_Move.ToRow, i_Move.ToCol))
             {
-                if (i_Board.GameBoard[i_Move.XTo, i_Move.YTo].PiecePointer == null)
+                Piece pieceToBeCaptured =
+                    i_Board.GameBoard[(i_Move.FromRow + i_Move.ToRow) / 2, (i_Move.FromCol + i_Move.ToCol) / 2].PiecePointer;
+                // check destination is empty
+                if (i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].PiecePointer == null)
                 {
-                    if (MoveValidator.IsInBorders(i_Board, i_Move.XFrom - 1, i_Move.YFrom + i_Direction))
+                    if (pieceToBeCaptured != null)
                     {
-                        if (i_Board.GameBoard[i_Move.XFrom - 1, i_Move.YFrom + i_Direction].PiecePointer != null)
+                        if (pieceToBeCaptured.r_Side == MoveValidator.GetOtherSide(this.Side))
                         {
-                            if (i_Board.GameBoard[i_Move.XFrom - 1, i_Move.YFrom + i_Direction].PiecePointer.Side == MoveValidator.GetOtherSide(this.Side))
-                            {
-                                captureMove = true;
-                            }
+                            return true;
                         }
                     }
                 }
             }
 
-            return captureMove;
+            return false;
         }
 
         private bool checkKingCapture(Board i_Board, int i_Direction, Move i_Move)
         {
             bool captureMove = false;
-            if (MoveValidator.IsInBorders(i_Board, i_Move.XTo, i_Move.YTo))
+            if (MoveValidator.IsInBorders(i_Board, i_Move.ToRow, i_Move.ToCol))
             {
-                if (i_Board.GameBoard[i_Move.XTo, i_Move.YTo].PiecePointer == null)
+                if (i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].PiecePointer == null)
                 {
-                    if(i_Board.GameBoard[i_Move.XFrom + 1, i_Move.YFrom + i_Direction].PiecePointer != null)
+                    if(i_Board.GameBoard[i_Move.FromRow + 1, i_Move.FromCol + i_Direction].PiecePointer != null)
                     {
-                        if (i_Board.GameBoard[i_Move.XFrom + 1, i_Move.YFrom + i_Direction].PiecePointer.Side == MoveValidator.GetOtherSide(this.Side))
+                        if (i_Board.GameBoard[i_Move.FromRow + 1, i_Move.FromCol + i_Direction].PiecePointer.Side == MoveValidator.GetOtherSide(this.Side))
                         {
                             captureMove = true;
                         }
@@ -209,19 +206,6 @@ namespace CheckersWinForms
             set
             {
                 m_IsKing = true;
-            }
-        }
-
-        public bool IsCaptured
-        {
-            get
-            {
-                return m_IsCaptured;
-            }
-
-            set
-            {
-                m_IsCaptured = true;
             }
         }
     }

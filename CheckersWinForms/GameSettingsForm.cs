@@ -13,21 +13,20 @@ namespace CheckersWinForms
         }
 
         // Private Methods
+        // Validate that player names are valid
         private bool isFormValid()
         {
-            bool isValid = true;
-
             if (m_TextBoxPlayerOneName.Text.Length == 0)
             {
-                isValid = false;
+                return false;
             }
 
             if (m_TextBoxPlayerTwoName.Text.Length == 0 && m_CheckBoxPlayer2.CheckState == CheckState.Checked)
             {
-                isValid = false;
+                return false;
             }
 
-            return isValid;
+            return true;
         }
 
         // Event Handlers

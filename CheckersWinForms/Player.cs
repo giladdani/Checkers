@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Threading;
 
 namespace CheckersWinForms
 {
@@ -27,7 +24,7 @@ namespace CheckersWinForms
         }
 
         // Public Methods
-        // Initialize array of pieces
+        // Initialize array of pieces and their location on the board according to it's size
         public void InitPieceArr(ePlayerSide i_Side, int i_BoardSize)
         {
             int numOfPieces = (i_BoardSize / 2) * ((i_BoardSize / 2) - 1);
@@ -71,67 +68,66 @@ namespace CheckersWinForms
         // Returns true if the player has any possible move to play
         public bool HasPossibleMoves(Board i_CurrentBoard)
         {
-            bool hasMove = false;
-
             foreach (Piece piece in m_Pieces)
             {
-                // if piece can move/capture
                 if (piece.HasPossibleMoves(this, i_CurrentBoard))
                 {
-                    hasMove = true;
+                    return true;
                 }
             }
 
-            return hasMove;
+            return false;
         }
 
-        // Returns a random selected move for player 2
+        // Returns a randomly selected move
         public Move GenerateRandomMove(Board i_Board)
         {
             Move chosenMove = null;
             bool capturePossible = false;
             List<List<Move>> allPiecesMoves = new List<List<Move>>();
 
+            // for every piece- make a list of it's possible moves
             foreach (Piece piece in m_Pieces)
             {
-                List<Move> pieceMoves = piece.GetAvailableMovesList(this, i_Board, ref capturePossible);
+                List<Move> pieceMoves = piece.GetPossibleMovesList(this, i_Board, ref capturePossible);
                 if (pieceMoves.Count > 0)
                 {
                     allPiecesMoves.Add(pieceMoves);
                 }
             }
 
+            // if there is at least one possible capture move possible- we choose capture over simple move
             if (capturePossible)
             {
                 chosenMove = findCaptureMove(i_Board, allPiecesMoves);
             }
+            // otherwise- randomly select any of the possible simple moves
             else
             {
                 Random randomGenerator = new Random();
-                int listIndex = randomGenerator.Next(allPiecesMoves.Count - 1);
-                int moveIndex = randomGenerator.Next(allPiecesMoves[listIndex].Count - 1);
+                int listIndex = randomGenerator.Next(allPiecesMoves.Count);
+                int moveIndex = randomGenerator.Next(allPiecesMoves[listIndex].Count);
                 chosenMove = allPiecesMoves[listIndex][moveIndex];
             }
 
             return chosenMove;
         }
 
+        // Returns a capture move from all possible moves of all pieces
         private Move findCaptureMove(Board i_Board, List<List<Move>> i_AllMovesList)
         {
-            Move captureMove = null;
-
             foreach (List<Move> list in i_AllMovesList)
             {
                 foreach (Move move in list)
                 {
                     if (MoveValidator.IsCaptureMovePossible(this, i_Board, move))
                     {
-                        captureMove = move;
+                        return move;
                     }
                 }
             }
 
-            return captureMove;
+            return null;
         }
 
         // Properties

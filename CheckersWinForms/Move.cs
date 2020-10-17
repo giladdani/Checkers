@@ -6,82 +6,82 @@ namespace CheckersWinForms
     public class Move
     {
         // Private Members
-        private int m_XFrom;
-        private int m_YFrom;
-        private int m_XTo;
-        private int m_YTo;
+        private int m_FromRow;
+        private int m_FromCol;
+        private int m_ToRow;
+        private int m_ToCol;
 
         // Constructors
         public Move()
         {
         }
 
-        public Move(int i_YFrom, int i_XFrom, int i_YTo, int i_XTo)
+        public Move(int i_FromCol, int i_FromRow, int i_ToCol, int i_ToRow)
         {
-            m_YFrom = i_YFrom;
-            m_XFrom = i_XFrom;
-            m_YTo = i_YTo;
-            m_XTo = i_XTo;
+            m_FromCol = i_FromCol;
+            m_FromRow = i_FromRow;
+            m_ToCol = i_ToCol;
+            m_ToRow = i_ToRow;
         }
 
         public Move(string i_Move)
         {
-            m_YFrom = i_Move[0] - 'A';
-            m_XFrom = i_Move[1] - 'a';
-            m_YTo = i_Move[3] - 'A';
-            m_XTo = i_Move[4] - 'a';
+            m_FromCol = i_Move[0] - 'A';
+            m_FromRow = i_Move[1] - 'a';
+            m_ToCol = i_Move[3] - 'A';
+            m_ToRow = i_Move[4] - 'a';
         }
 
         // Properties
-        public int XFrom
+        public int FromCol
         {
             get
             {
-                return m_XFrom;
+                return m_FromCol;
             }
 
             set
             {
-                m_XFrom = value;
+                m_FromCol = value;
             }
         }
 
-        public int YFrom
+        public int FromRow
         {
             get
             {
-                return m_YFrom;
+                return m_FromRow;
             }
 
             set
             {
-                m_YFrom = value;
+                m_FromRow = value;
             }
         }
 
-        public int XTo
+        public int ToCol
         {
             get
             {
-                return m_XTo;
+                return m_ToCol;
             }
 
             set
             {
-                m_XTo = value;
+                m_ToCol = value;
             }
         }
 
-        public int YTo
+        public int ToRow
         {
             get
             {
-                return m_YTo;
+                return m_ToRow;
             }
 
             set
             {
-                m_YTo = value;
+                m_ToRow = value;
             }
         }
     }

@@ -30,6 +30,7 @@ namespace CheckersWinForms
         }
 
         // Private Methods
+        // Setup first time board settings
         private void initBoardSettings(Board i_Board)
         {
             m_SquareButtons = new SquareButton[i_Board.Size, i_Board.Size];
@@ -56,6 +57,7 @@ namespace CheckersWinForms
         }
 
         // Public Methods
+        // Reset basic board settings needed for a new round
         public void ResetBoardSettings(Board i_Board)
         {
             for (int row = 0; row < i_Board.Size; row++)
@@ -69,8 +71,11 @@ namespace CheckersWinForms
                     }
                 }
             }
+
+            HighlightCurrentPlayerLabel();
         }
 
+        // Refreshes players labels with updated scores
         public void UpdatePlayersNamesAndScores()
         {
             this.LabelPlayerOneName.Text = string.Format(
@@ -85,6 +90,7 @@ namespace CheckersWinForms
                 m_Game.PlayerTwo.TotalScore);
         }
 
+        // Changes players label color according to current turn
         public void HighlightCurrentPlayerLabel()
         {
             LabelPlayerOneName.ForeColor = m_Game.CurrentPlayer == m_Game.PlayerOne ? Color.Red : Color.Black;
@@ -97,6 +103,7 @@ namespace CheckersWinForms
             this.LabelPlayerTwoName.Left = this.Width - 175;
         }
 
+        // Shows starting player message
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
@@ -105,11 +112,13 @@ namespace CheckersWinForms
             HighlightCurrentPlayerLabel();
         }
 
+        // Starts building a move according to chosen square
         private void squareClicked(SquareButton i_SquareButton)
         {
             string currentSquareLocationString;
             Piece pieceAtSquare = m_Game.Board.GameBoard[i_SquareButton.RowIndex, i_SquareButton.ColIndex].PiecePointer;
 
+            // First click- build the move's starting position
             if (m_CurrentMove.ToString() == string.Empty && pieceAtSquare != null)
             {
                 if (pieceAtSquare.Side == m_Game.CurrentPlayer.Side)
@@ -122,6 +131,7 @@ namespace CheckersWinForms
                     m_SelectedSquare = i_SquareButton;
                 }
             }
+            // Second click- add the move's ending position and execute it
             else if (m_CurrentMove.ToString() != string.Empty && pieceAtSquare == null)
             {
                 m_SelectedSquare.BackColor = Color.White;
@@ -134,6 +144,7 @@ namespace CheckersWinForms
                 m_Game.ExecuteMove(selectedMove);
                 m_CurrentMove.Clear();
             }
+            // Second click on the same square- cancel the chosen square (reset the move)
             else if (pieceAtSquare != null && pieceAtSquare == m_Game.Board.GameBoard[m_SelectedSquare.RowIndex, m_SelectedSquare.ColIndex].PiecePointer)
             {
                 m_SelectedSquare.BackColor = Color.White;
@@ -142,6 +153,7 @@ namespace CheckersWinForms
             }
         }
 
+        // Change square interior symbol according to the piece it holds
         private void updateSquareText(Square i_SquareToUpdate)
         {
             int row = i_SquareToUpdate.RowIndex;

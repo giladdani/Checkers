@@ -43,45 +43,51 @@ namespace CheckersWinForms
         public void ExecuteMove(Move i_Move)
         {
             eMoveFeedback moveFeedback = eMoveFeedback.Failed;
+            Piece piece = m_Board.GameBoard[i_Move.FromRow, i_Move.FromCol].PiecePointer;
 
-            if (m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer != null)
+            if (piece != null)
             {
-                // simple move
+                // User chose simple move
                 if (MoveValidator.IsSimpleMove(CurrentPlayer, m_Board, i_Move))
                 {
+                    // If the player can capture- the move fails (he must choose to capture)
                     if (MoveValidator.IsPlayerHasCapture(CurrentPlayer, m_Board))
                     {
                         moveFeedback = eMoveFeedback.FailedCouldCapture;
                     }
                     else
                     {
-                        if (m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer.IsKing == false)
+                        // If the moving piece is NOT a king
+                        if (piece.IsKing == false)
                         {
-                            if ((CurrentPlayer.Side == ePlayerSide.Down && i_Move.XFrom < i_Move.XTo) || (CurrentPlayer.Side == ePlayerSide.Up && i_Move.XFrom > i_Move.XTo))
+                            // If tries to move in the opposite direction- the move fails
+                            if (MoveValidator.IsMovingInValidDirection(CurrentPlayer, i_Move, piece) == false)
                             {
                                 moveFeedback = eMoveFeedback.Failed;
                             }
                             else
                             {
-                                m_Board.MakeMove(CurrentPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
+                                m_Board.MovePiece(CurrentPlayer, piece, new Point(i_Move.ToRow, i_Move.ToCol));
                                 moveFeedback = eMoveFeedback.Success;
                             }
                         }
+                        // moving piece is a king
                         else
                         {
-                            m_Board.MakeMove(CurrentPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
+                            m_Board.MovePiece(CurrentPlayer, piece, new Point(i_Move.ToRow, i_Move.ToCol));
                             moveFeedback = eMoveFeedback.Success;
                         }
                     }
                 }
+                // User chose capture move
                 else if (MoveValidator.IsCaptureMovePossible(CurrentPlayer, m_Board, i_Move))
                 {
                     Player enemyPlayer = CurrentPlayer == PlayerOne ? PlayerTwo : PlayerOne;
-                    m_Board.MakeCaptureMove(enemyPlayer, m_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer, new Point(i_Move.XTo, i_Move.YTo));
+                    m_Board.MoveCapturingPiece(CurrentPlayer, enemyPlayer, piece, new Point(i_Move.ToRow, i_Move.ToCol));
                     moveFeedback = eMoveFeedback.Success;
 
                     // check double capture option
-                    if (MoveValidator.isCapturePossiblePerPiece(CurrentPlayer, m_Board, m_Board.GameBoard[i_Move.XTo, i_Move.YTo].PiecePointer))
+                    if (MoveValidator.CanPieceCapture(m_Board, m_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].PiecePointer))
                     {
                         moveFeedback = eMoveFeedback.CanDoubleCapture;
                     }
@@ -93,6 +99,7 @@ namespace CheckersWinForms
                 m_TurnCount++;
             }
 
+            // Notify listeners of move execution completed
             MoveExecuted?.Invoke(moveFeedback);
         }
 
@@ -100,15 +107,25 @@ namespace CheckersWinForms
         public bool IsOver()
         {
             // If a player has no pieces left
-            bool isOver = (m_PlayerOne.Pieces.Count == 0 || m_PlayerTwo.Pieces.Count == 0) && m_TurnCount > 0;
+            bool isPlayerOutOfPieces = (m_PlayerOne.Pieces.Count == 0 || m_PlayerTwo.Pieces.Count == 0) && m_TurnCount > 0;
 
             // If current player has no moves to play
-            if (!CurrentPlayer.HasPossibleMoves(m_Board))
+            bool isPlayerOutOfMoves = CurrentPlayer.HasPossibleMoves(m_Board) == false;
+
+            if (isPlayerOutOfMoves || isPlayerOutOfPieces)
             {
-                isOver = true;
+                return true;
             }
 
-            return isOver;
+            return false;
+        }
+
+        // Resets the turn count, rebuilds the board and resets pieces starting positions
+        public void ResetBasicSettings()
+        {
+            m_TurnCount = 0;
+            m_Board.Build();
+            SetPiecesStartingPositions();
         }
 
         // Calculate current score of players based of pieces left difference
@@ -156,17 +173,7 @@ namespace CheckersWinForms
         {
             get
             {
-                Player player;
-                if (m_TurnCount % 2 == 0)
-                {
-                    player = m_PlayerOne;
-                }
-                else
-                {
-                    player = m_PlayerTwo;
-                }
-
-                return player;
+                return m_TurnCount % 2 == 0 ? m_PlayerOne : m_PlayerTwo;
             }
         }
 
@@ -183,14 +190,6 @@ namespace CheckersWinForms
             get
             {
                 return m_TurnCount;
-            }
-
-            set
-            {
-                if (value > 0)
-                {
-                    m_TurnCount = value;
-                }
             }
         }
 

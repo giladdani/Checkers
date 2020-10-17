@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Globalization;
 using System.Text;
 
 namespace CheckersWinForms
 {
     public class MoveValidator
     {
+        // Returns a string of format 'COLrow' describing a location on the board
         public static string ConvertLocationToString(int i_Row, int i_Col)
         {
             StringBuilder locationString = new StringBuilder();
@@ -15,12 +15,14 @@ namespace CheckersWinForms
             return locationString.ToString();
         }
 
+        // Returns a string describing the given move
         public static string ConvertMoveToString(Move i_Move)
         {
-            char fromColumn = (char)(i_Move.YFrom + 'A');
-            char fromRow = (char)(i_Move.XFrom + 'a');
-            char toColumn = (char)(i_Move.YTo + 'A');
-            char toRow = (char)(i_Move.XTo + 'a');
+            char fromColumn = (char)(i_Move.FromCol + 'A');
+            char fromRow = (char)(i_Move.FromRow + 'a');
+            char toColumn = (char)(i_Move.ToCol + 'A');
+            char toRow = (char)(i_Move.ToRow + 'a');
+
             StringBuilder moveString = new StringBuilder();
             moveString.Append(fromColumn);
             moveString.Append(fromRow);
@@ -31,77 +33,50 @@ namespace CheckersWinForms
             return moveString.ToString();
         }
 
+        // Returns a move using given string that describes it
         public static Move ConvertStringToMove(string i_MoveAsString)
         {
             int fromColumn = i_MoveAsString[0] - 'A';
             int fromRow = i_MoveAsString[1] - 'a';
             int toColumn = i_MoveAsString[3] - 'A';
             int toRow = i_MoveAsString[4] - 'a';
-            Move move = new Move { YFrom = fromColumn, XFrom = fromRow, YTo = toColumn, XTo = toRow };
+            Move move = new Move { FromCol = fromColumn, FromRow = fromRow, ToCol = toColumn, ToRow = toRow };
 
             return move;
         }
 
-        public static bool isCapturePossiblePerPiece(Player i_Player, Board i_Board, Piece i_Piece)
+        // Returns true if the given piece can capture
+        public static bool CanPieceCapture(Board i_Board, Piece i_Piece)
         {
-            bool captureMovePossible = false;
+            bool isCaptureMovePossible = false;
+            int moveDirection = i_Piece.Side == ePlayerSide.Down ? -1 : 1;
 
-            if (i_Player.Side == ePlayerSide.Down)
-            {
-                captureMovePossible = IsCaptureMovePossiblePerSide(ePlayerSide.Down, i_Board, (int)ePlayerMoves.MoveUp, i_Piece);
-            }
-            else
-            {
-                captureMovePossible = IsCaptureMovePossiblePerSide(ePlayerSide.Up, i_Board, (int)ePlayerMoves.MoveDown, i_Piece);
-            }
 
+            isCaptureMovePossible = IsCaptureMovePossiblePerSide(i_Piece.Side, i_Board, moveDirection, i_Piece);
+
+            // if the piece is king- also look for captures in opposite direction
             if (i_Piece.IsKing)
             {
-                if (i_Player.Side == ePlayerSide.Down)
-                {
-                    captureMovePossible = captureMovePossible || IsCaptureMovePossiblePerSide(ePlayerSide.Down, i_Board, (int)ePlayerMoves.MoveDown, i_Piece);
-                }
-                else
-                {
-                    captureMovePossible = captureMovePossible || IsCaptureMovePossiblePerSide(ePlayerSide.Up, i_Board, (int)ePlayerMoves.MoveUp, i_Piece);
-                }
+                isCaptureMovePossible = isCaptureMovePossible || IsCaptureMovePossiblePerSide(i_Piece.Side, i_Board, (moveDirection * -1), i_Piece);
             }
 
-            return captureMovePossible;
-        }
-
-        public static bool IsPlayerHasCapture(Player i_Player, Board i_Board)
-        {
-            bool canCapture = false;
-
-            foreach (Piece piece in i_Player.Pieces)
-            {
-                if (piece.IsKing)
-                {
-                    canCapture = canCapture || IsKingCapturePossible(i_Player, i_Board, piece);
-                }
-                else
-                {
-                    canCapture = canCapture || isCapturePossiblePerPiece(i_Player, i_Board, piece);
-                }
-            }
-
-            return canCapture;
+            return isCaptureMovePossible;
         }
 
         public static bool IsCaptureMovePossiblePerSide(ePlayerSide i_Side, Board i_Board, int i_Direction, Piece i_Piece)
         {
-            bool captureMovePossible = false;
+            bool isCaptureMovePossible = false;
+            ePlayerSide opponentSide = GetOtherSide(i_Side);
 
             if (IsInBorders(i_Board, i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction) && i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction].PiecePointer != null)
             {
-                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction].PiecePointer.Side == GetOtherSide(i_Side))
+                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction].PiecePointer.Side == opponentSide)
                 {
                     if (IsInBorders(i_Board, i_Piece.Location.X + (2 * i_Direction), i_Piece.Location.Y - (2 * i_Direction)))
                     {
                         if (i_Board.GameBoard[i_Piece.Location.X + (2 * i_Direction), i_Piece.Location.Y - (2 * i_Direction)].PiecePointer == null)
                         {
-                            captureMovePossible = true;
+                            isCaptureMovePossible = true;
                         }
                     }
                 }
@@ -109,141 +84,118 @@ namespace CheckersWinForms
 
             if (IsInBorders(i_Board, i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction) && i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction].PiecePointer != null)
             {
-                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction].PiecePointer.Side == GetOtherSide(i_Side))
+                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction].PiecePointer.Side == opponentSide)
                 {
                     if (IsInBorders(i_Board, i_Piece.Location.X + (2 * i_Direction), i_Piece.Location.Y + (2 * i_Direction)))
                     {
                         if (i_Board.GameBoard[i_Piece.Location.X + (2 * i_Direction), i_Piece.Location.Y + (2 * i_Direction)].PiecePointer == null)
                         {
-                            captureMovePossible = true;
+                            isCaptureMovePossible = true;
                         }
                     }
                 }
             }
 
-            return captureMovePossible;
+            return isCaptureMovePossible;
         }
 
-        public static bool IsKingCapturePossible(Player i_Player, Board i_Board, Piece i_Piece)
+        // Returns true if the player has any possible captures to make
+        public static bool IsPlayerHasCapture(Player i_Player, Board i_Board)
         {
-            bool kingCapturePossible = false;
-
-            if (i_Player.Side == ePlayerSide.Down)
+            foreach (Piece piece in i_Player.Pieces)
             {
-                kingCapturePossible = IsCaptureMovePossiblePerSide(ePlayerSide.Down, i_Board, (int)ePlayerMoves.MoveDown, i_Piece);
-            }
-            else
-            {
-                kingCapturePossible = IsCaptureMovePossiblePerSide(ePlayerSide.Up, i_Board, (int)ePlayerMoves.MoveUp, i_Piece);
+                if(CanPieceCapture(i_Board, piece))
+                {
+                    return true;
+                }
             }
 
-            return kingCapturePossible;
+            return false;
         }
 
-        // Returns true if the the move without capture is possible
+        // Returns true if the given move is considered simple
         public static bool IsSimpleMove(Player i_Player, Board i_Board, Move i_Move)
         {
-            bool simpleMove = false;
+            bool isDestinationInBorders = IsInBorders(i_Board, i_Move.ToRow, i_Move.ToCol);
 
-            // if destination is empty
-            if (IsInBorders(i_Board, i_Move.XTo, i_Move.YTo) && i_Board.GameBoard[i_Move.XTo, i_Move.YTo].PiecePointer == null)
+            if (isDestinationInBorders)
             {
-                // if row diff is 1
-                if (Math.Abs(i_Move.XTo - i_Move.XFrom) == 1)
+                bool isDestinationEmpty = i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].PiecePointer == null;
+                if(isDestinationEmpty)
                 {
-                    simpleMove = IsKingMoveDiagonalLine(i_Player, i_Move) || IsSimpleMovePossible(i_Player, i_Board, i_Move);
+                    return isSimpleMovePossible(i_Player, i_Board, i_Move);
                 }
             }
 
-            return simpleMove;
+            return false;
         }
 
-        public static bool IsSimpleMovePossible(Player i_Player, Board i_Board, Move i_Move)
+        private static bool isSimpleMovePossible(Player i_Player, Board i_Board, Move i_Move)
         {
-            bool possible = false;
+            bool isPossible = false;
+            Piece movingPiece = i_Board.GameBoard[i_Move.FromRow, i_Move.FromCol].PiecePointer;
 
-            // check valid move for regular piece
-            if (i_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer != null)
+            if (movingPiece != null)
             {
-                if (i_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer.IsKing == false)
-                {
-                    if (i_Player.Side == ePlayerSide.Down)
-                    {
-                        possible = IsMoveDiagonalLine(ePlayerSide.Down, i_Move, (int)ePlayerMoves.MoveUp);
-                    }
+                isPossible = isMoveSimpleDiagonalLine(i_Player.Side, i_Move);
 
-                    if (i_Player.Side == ePlayerSide.Up)
-                    {
-                        possible = IsMoveDiagonalLine(ePlayerSide.Up, i_Move, (int)ePlayerMoves.MoveDown);
-                    }
-                }
-
-                if (i_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer.IsKing)
+                // if king- also check opposite direction
+                if(movingPiece.IsKing)
                 {
-                    if (IsKingMoveDiagonalLine(i_Player, i_Move))
-                    {
-                        possible = true;
-                    }
+                    ePlayerSide oppositeSide = MoveValidator.GetOtherSide(i_Player.Side);
+                    isPossible = isPossible || isMoveSimpleDiagonalLine(oppositeSide, i_Move);
                 }
             }
 
-            return possible;
+            return isPossible;
         }
 
-        public static bool IsMoveDiagonalLine(ePlayerSide i_Side, Move i_Move, int i_Direction)
+        private static bool isMoveSimpleDiagonalLine(ePlayerSide i_Side, Move i_Move)
         {
-            bool diagonalLine = false;
-
-            if ((i_Move.XTo == i_Move.XFrom + i_Direction) && (Math.Abs(i_Move.YFrom - i_Move.YTo) == 1))
+            int rowDifference = Math.Abs(i_Move.ToRow - i_Move.FromRow);
+            int colDifference = Math.Abs(i_Move.FromCol - i_Move.ToCol);
+            if (rowDifference == 1 && colDifference == 1)
             {
-                diagonalLine = true;
+                return true;
             }
 
-            return diagonalLine;
-        }
-
-        public static bool IsKingMoveDiagonalLine(Player i_Player, Move i_Move)
-        {
-            bool diagonalLine = (Math.Abs(i_Move.XTo - i_Move.XFrom) == 1) &&
-                                (Math.Abs(i_Move.YTo - i_Move.YFrom) == 1);
-
-            return diagonalLine;
+            return false;
         }
 
         // Returns true if the the move with capture is possible
         public static bool IsCaptureMovePossible(Player i_Player, Board i_Board, Move i_Move)
         {
-            bool captureMove = false;
-            Piece currentPiece = i_Board.GameBoard[i_Move.XFrom, i_Move.YFrom].PiecePointer;
-            Piece pieceToBeEaten = i_Board.GameBoard[(i_Move.XFrom + i_Move.XTo) / 2, (i_Move.YFrom + i_Move.YTo) / 2].PiecePointer;
+            bool isCaptureMovePossible = false;
+            Piece currentPiece = i_Board.GameBoard[i_Move.FromRow, i_Move.FromCol].PiecePointer;
+            Piece pieceToBeCaptured = i_Board.GameBoard[(i_Move.FromRow + i_Move.ToRow) / 2, (i_Move.FromCol + i_Move.ToCol) / 2].PiecePointer;
 
-            if (currentPiece != null && IsInBorders(i_Board, i_Move.XTo, i_Move.YTo))
+            if (currentPiece != null && IsInBorders(i_Board, i_Move.ToRow, i_Move.ToCol))
             {
                 // is destination empty
-                if (i_Board.GameBoard[i_Move.XTo, i_Move.YTo].PiecePointer == null)
+                if (i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].PiecePointer == null)
                 {
                     if (i_Player.Side == ePlayerSide.Down)
                     {
-                        if(pieceToBeEaten != null && pieceToBeEaten.Side == ePlayerSide.Up)
+                        if(pieceToBeCaptured != null && pieceToBeCaptured.Side == ePlayerSide.Up)
                         {
-                            if (i_Move.XFrom - 1 == i_Move.XTo + 1 || (currentPiece.IsKing && i_Move.XFrom + 1 == i_Move.XTo - 1))
+                            if (i_Move.FromRow - 1 == i_Move.ToRow + 1 || (currentPiece.IsKing && i_Move.FromRow + 1 == i_Move.ToRow - 1))
                             {
-                                if (((i_Move.YFrom + 1) == (i_Move.YTo - 1)) || ((i_Move.YFrom - 1) == (i_Move.YTo + 1)))
+                                if (((i_Move.FromCol + 1) == (i_Move.ToCol - 1)) || ((i_Move.FromCol - 1) == (i_Move.ToCol + 1)))
                                 {
-                                    captureMove = true;
+                                    isCaptureMovePossible = true;
                                 }
                             }
                         }
                     }
                     else
                     {
-                        if(pieceToBeEaten != null && pieceToBeEaten.Side == ePlayerSide.Down)
+                        if(pieceToBeCaptured != null && pieceToBeCaptured.Side == ePlayerSide.Down)
                         {
-                            if (i_Move.XFrom + 1 == i_Move.XTo - 1 || (currentPiece.IsKing && i_Move.XFrom - 1 == i_Move.XTo + 1))
+                            if (i_Move.FromRow + 1 == i_Move.ToRow - 1 || (currentPiece.IsKing && i_Move.FromRow - 1 == i_Move.ToRow + 1))
                             {
-                                if (((i_Move.YFrom + 1) == (i_Move.YTo - 1)) || ((i_Move.YFrom - 1) == (i_Move.YTo + 1)))
+                                if (((i_Move.FromCol + 1) == (i_Move.ToCol - 1)) || ((i_Move.FromCol - 1) == (i_Move.ToCol + 1)))
                                 {
-                                    captureMove = true;
+                                    isCaptureMovePossible = true;
                                 }
                             }
                         }
@@ -251,58 +203,47 @@ namespace CheckersWinForms
                 }
             }
 
-            return captureMove;
+            return isCaptureMovePossible;
         }
 
-        public static bool IsPieceHavePossibleMove(Player i_Player, Board i_Board, Piece i_Piece)
+        // Returns true if the given piece has any possible moves to execute
+        public static bool IsPieceHaveMoves(Board i_Board, Piece i_Piece)
         {
-            bool pieceHavePossibleMove = false;
+            bool hasPossibleMoves = false;
 
-            pieceHavePossibleMove = isSimpleMovePossiblePerPiece(i_Player, i_Board, i_Piece);
-            pieceHavePossibleMove = pieceHavePossibleMove || isCapturePossiblePerPiece(i_Player, i_Board, i_Piece);
+            hasPossibleMoves = CanPieceSimpleMove(i_Board, i_Piece);
+            hasPossibleMoves = hasPossibleMoves || CanPieceCapture(i_Board, i_Piece);
 
-            return pieceHavePossibleMove;
+            return hasPossibleMoves;
         }
 
-        private static bool isSimpleMovePossiblePerPiece(Player i_Player, Board i_Board, Piece i_Piece)
+        public static bool CanPieceSimpleMove(Board i_Board, Piece i_Piece)
         {
-            bool pieceHavePossibleMove = false;
+            bool canSimpleMove = false;
+            int moveDirection = i_Piece.Side == ePlayerSide.Down ? -1 : 1;
 
-            if (i_Piece.IsKing == false)
+
+            canSimpleMove = canPieceSimpleMoveInDirection(i_Board, i_Piece, moveDirection);
+
+            // if piece is king- also check opposite direction
+            if(i_Piece.IsKing)
             {
-                if (i_Player.Side == ePlayerSide.Down)
-                {
-                    pieceHavePossibleMove = isSimpleMovePossiblePerPieceBySide(i_Board, i_Piece, (int)ePlayerMoves.MoveUp);
-                }
-                else
-                {
-                    pieceHavePossibleMove = isSimpleMovePossiblePerPieceBySide(i_Board, i_Piece, (int)ePlayerMoves.MoveDown);
-                }
-            }
-            else
-            {
-                if (i_Player.Side == ePlayerSide.Down)
-                {
-                    pieceHavePossibleMove = isSimpleMovePossiblePerPieceBySide(i_Board, i_Piece, (int)ePlayerMoves.MoveDown);
-                }
-                else
-                {
-                    pieceHavePossibleMove = isSimpleMovePossiblePerPieceBySide(i_Board, i_Piece, (int)ePlayerMoves.MoveUp);
-                }
+                canSimpleMove = canSimpleMove || canPieceSimpleMoveInDirection(i_Board, i_Piece, (moveDirection * -1));
             }
 
-            return pieceHavePossibleMove;
+            return canSimpleMove;
         }
 
-        private static bool isSimpleMovePossiblePerPieceBySide(Board i_Board, Piece i_Piece, int i_Direction)
+        // returns true if the given piece can simple move by given side
+        private static bool canPieceSimpleMoveInDirection(Board i_Board, Piece i_Piece, int i_Direction)
         {
-            bool pieceHavePossibleMove = false;
+            bool isPieceHavePossibleMove = false;
 
             if (IsInBorders(i_Board, i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction))
             {
                 if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction].PiecePointer == null)
                 {
-                    pieceHavePossibleMove = true;
+                    isPieceHavePossibleMove = true;
                 }
             }
 
@@ -310,29 +251,57 @@ namespace CheckersWinForms
             {
                 if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction].PiecePointer == null)
                 {
-                    pieceHavePossibleMove = true;
+                    isPieceHavePossibleMove = true;
                 }
             }
 
-            return pieceHavePossibleMove;
+            return isPieceHavePossibleMove;
         }
 
+        // Returns the opposite side of the given side
         public static ePlayerSide GetOtherSide(ePlayerSide i_Side)
         {
             ePlayerSide side = (i_Side == ePlayerSide.Down) ? ePlayerSide.Up : ePlayerSide.Down;
-
             return side;
         }
 
+        // Returns true if the given new location is in the board's borders
         public static bool IsInBorders(Board i_Board, int i_X, int i_Y)
         {
-            bool inBorders = false;
-            if (i_X >= 0 && i_X < i_Board.Size && i_Y >= 0 && i_Y < i_Board.Size)
+            bool inRowBorders = i_X >= 0 && i_X < i_Board.Size;
+            bool inColBorders = i_Y >= 0 && i_Y < i_Board.Size;
+            if (inRowBorders && inColBorders)
             {
-                inBorders = true;
+                return true;
             }
 
-            return inBorders;
+            return false;
+        }
+
+        public static bool IsMovingInValidDirection(Player i_CurrentPlayer, Move i_Move, Piece i_Piece)
+        {
+            bool isDirectionValid = false;
+
+            if (i_Piece.IsKing)
+            {
+                isDirectionValid = true;
+            }
+            else
+            {
+                // bottom player tries to move up
+                if(i_CurrentPlayer.Side == ePlayerSide.Down && i_Move.FromRow > i_Move.ToRow)
+                {
+                    isDirectionValid = true;
+                }
+
+                // top player tries to move down
+                else if(i_CurrentPlayer.Side == ePlayerSide.Up && i_Move.FromRow < i_Move.ToRow)
+                {
+                    isDirectionValid = true;
+                }
+            }
+
+            return isDirectionValid;
         }
     }
 }
