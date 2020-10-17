@@ -11,7 +11,7 @@ namespace CheckersWinForms
         // Private Members
         private const string k_TopPlayerSign = "O";
         private const string k_BottomPlayerSign = "X";
-        private const string k_TopPlayerKingSign = "U";
+        private const string k_TopPlayerKingSign = "Q";
         private const string k_BottomPlayerKingSign = "K";
         private Game m_Game;
         private SquareButton[,] m_SquareButtons;
@@ -39,16 +39,16 @@ namespace CheckersWinForms
             {
                 for (int col = 0; col < i_Board.Size; col++)
                 {
-                    m_SquareButtons[row, col] = new SquareButton(row, col) { Width = 60, Height = 60, Left = col * 60, Top = (row + 1) * 60, TabStop = false };
+                    m_SquareButtons[row, col] = new SquareButton(row, col) { Width = 60, Height = 60, Left = col * 60, Top = (row + 1) * 60, TabStop = false, Font = new Font("Arial", 24, FontStyle.Bold) };
                     if ((row % 2 == 0 && col % 2 != 0) || (row % 2 != 0 && col % 2 == 0))
                     {
                         m_SquareButtons[row, col].SquareClicked += squareClicked;
-                        m_SquareButtons[row, col].BackColor = Color.White;
-                        m_Game.Board.GameBoard[row, col].CurrentPieceChanged += updateSquareText;
+                        m_SquareButtons[row, col].BackColor = Color.BurlyWood;
+                        m_Game.Board.GameBoard[row, col].CurrentPieceChanged += updateSquareSymbol;
                     }
                     else
                     {
-                        m_SquareButtons[row, col].BackColor = Color.DimGray;
+                        m_SquareButtons[row, col].BackColor = Color.SaddleBrown;
                         m_SquareButtons[row, col].Enabled = false;
                     }
 
@@ -67,8 +67,8 @@ namespace CheckersWinForms
                 {
                     if ((row % 2 == 0 && col % 2 != 0) || (row % 2 != 0 && col % 2 == 0))
                     {
-                        m_Game.Board.GameBoard[row, col].CurrentPieceChanged += updateSquareText;
-                        updateSquareText(m_Game.Board.GameBoard[row, col]);
+                        m_Game.Board.GameBoard[row, col].CurrentPieceChanged += updateSquareSymbol;
+                        updateSquareSymbol(m_Game.Board.GameBoard[row, col]);
                     }
                 }
             }
@@ -117,7 +117,8 @@ namespace CheckersWinForms
         private void squareClicked(SquareButton i_SquareButton)
         {
             string currentSquareLocationString;
-            Piece pieceAtSquare = m_Game.Board.GameBoard[i_SquareButton.RowIndex, i_SquareButton.ColIndex].PiecePointer;
+            Square square = m_Game.Board.GameBoard[i_SquareButton.RowIndex, i_SquareButton.ColIndex];
+            Piece pieceAtSquare = square.CurrentPiece;
 
             // First click- build the move's starting position
             if (m_CurrentMove.ToString() == string.Empty && pieceAtSquare != null)
@@ -135,7 +136,7 @@ namespace CheckersWinForms
             // Second click- add the move's ending position and execute it
             else if (m_CurrentMove.ToString() != string.Empty && pieceAtSquare == null)
             {
-                m_SelectedSquare.BackColor = Color.White;
+                m_SelectedSquare.BackColor = Color.BurlyWood;
                 currentSquareLocationString = MoveValidator.ConvertLocationToString(
                     i_SquareButton.RowIndex,
                     i_SquareButton.ColIndex);
@@ -146,20 +147,20 @@ namespace CheckersWinForms
                 m_CurrentMove.Clear();
             }
             // Second click on the same square- cancel the chosen square (reset the move)
-            else if (pieceAtSquare != null && pieceAtSquare == m_Game.Board.GameBoard[m_SelectedSquare.RowIndex, m_SelectedSquare.ColIndex].PiecePointer)
+            else if (pieceAtSquare != null && pieceAtSquare == m_Game.Board.GameBoard[m_SelectedSquare.RowIndex, m_SelectedSquare.ColIndex].CurrentPiece)
             {
-                m_SelectedSquare.BackColor = Color.White;
+                m_SelectedSquare.BackColor = Color.BurlyWood;
                 m_SelectedSquare = null;
                 m_CurrentMove.Clear();
             }
         }
 
-        // Change square interior symbol according to the piece it holds
-        private void updateSquareText(Square i_SquareToUpdate)
+        // Change square symbol according to the piece it holds
+        private void updateSquareSymbol(Square i_SquareToUpdate)
         {
             int row = i_SquareToUpdate.RowIndex;
             int col = i_SquareToUpdate.ColIndex;
-            Piece pieceAtSquare = m_Game.Board.GameBoard[row, col].PiecePointer;
+            Piece pieceAtSquare = m_Game.Board.GameBoard[row, col].CurrentPiece;
             if (pieceAtSquare != null)
             {
                 if (pieceAtSquare.IsKing)
