@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
+using CheckersLogic;
 
 namespace CheckersWinForms
 {
-    public class WinFormsUiManager
+    public class UiManager
     {
         // Private Members
         private GameSettingsForm m_GameSettingsForm;
@@ -19,8 +20,12 @@ namespace CheckersWinForms
             {
                 string playerOneName = m_GameSettingsForm.TextBoxPlayerOneName;
                 string playerTwoName = m_GameSettingsForm.TextBoxPlayerTwoName;
-
-                m_Game = new Game(playerOneName, playerTwoName, m_GameSettingsForm.SelectedBoardSize, m_GameSettingsForm.TwoPlayersMode);
+                bool aiEnabled = !m_GameSettingsForm.TwoPlayersMode;
+                if (aiEnabled)
+                {
+                    playerTwoName = "Computer";
+                }
+                m_Game = new Game(playerOneName, playerTwoName, m_GameSettingsForm.SelectedBoardSize, aiEnabled);
             }
             else
             {
@@ -34,7 +39,7 @@ namespace CheckersWinForms
             m_Game.ResetBasicSettings();
             m_Game.MoveExecuted += AnalyzeMoveFeedback;
             m_BoardForm = new BoardForm(m_Game);
-            if (m_Game.AiMode)
+            if (m_Game.AiEnabled)
             {
                 m_AiThinkingTimer = new Timer { Interval = 1250 };
                 m_AiThinkingTimer.Tick += playAiTurn;

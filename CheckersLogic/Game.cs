@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace CheckersWinForms
+namespace CheckersLogic
 {
     public class Game
     {
@@ -16,17 +16,12 @@ namespace CheckersWinForms
         private int m_TurnCount;
 
         // Constructors
-        public Game(string i_PlayerOneName, string i_PlayerTwoName, int i_BoardSize, bool i_TwoPlayersMode)
+        public Game(string i_PlayerOneName, string i_PlayerTwoName, int i_BoardSize, bool i_AiMode)
         {
-            if (i_TwoPlayersMode == false)
-            {
-                i_PlayerTwoName = "Computer";
-                m_AiMode = true;
-            }
-
             m_PlayerOne = new Player(i_PlayerOneName, ePlayerSide.Up, i_BoardSize, false);
-            m_PlayerTwo = new Player(i_PlayerTwoName, ePlayerSide.Down, i_BoardSize, m_AiMode);
+            m_PlayerTwo = new Player(i_PlayerTwoName, ePlayerSide.Down, i_BoardSize, i_AiMode);
             m_Board = new Board(i_BoardSize);
+            m_AiMode = i_AiMode;
         }
 
         // Public Methods
@@ -43,7 +38,7 @@ namespace CheckersWinForms
         public void ExecuteMove(Move i_Move)
         {
             eMoveFeedback moveFeedback = eMoveFeedback.Failed;
-            Piece piece = m_Board.GameBoard[i_Move.FromRow, i_Move.FromCol].PiecePointer;
+            Piece piece = m_Board.GameBoard[i_Move.FromRow, i_Move.FromCol].CurrentPiece;
 
             if (piece != null)
             {
@@ -87,7 +82,7 @@ namespace CheckersWinForms
                     moveFeedback = eMoveFeedback.Success;
 
                     // check double capture option
-                    if (MoveValidator.CanPieceCapture(m_Board, m_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].PiecePointer))
+                    if (MoveValidator.CanPieceCapture(m_Board, m_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].CurrentPiece))
                     {
                         moveFeedback = eMoveFeedback.CanDoubleCapture;
                     }
@@ -193,7 +188,7 @@ namespace CheckersWinForms
             }
         }
 
-        public bool AiMode
+        public bool AiEnabled
         {
             get
             {

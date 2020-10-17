@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows.Controls;
-
-namespace CheckersWinForms
+﻿namespace CheckersLogic
 {
     public class Move
     {

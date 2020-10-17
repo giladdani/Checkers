@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace CheckersWinForms
+namespace CheckersLogic
 {
     public class Board
     {
@@ -35,9 +35,9 @@ namespace CheckersWinForms
         {
             foreach (Piece piece in i_Player.Pieces)
             {
-                int x = piece.Location.X;
-                int y = piece.Location.Y;
-                m_GameBoard[x, y].PiecePointer = piece;
+                int row = piece.Location.X;
+                int column = piece.Location.Y;
+                m_GameBoard[row, column].CurrentPiece = piece;
             }
         }
 
@@ -50,21 +50,21 @@ namespace CheckersWinForms
                 i_Piece.IsKing = true;
             }
 
-            m_GameBoard[i_Piece.Location.X, i_Piece.Location.Y].PiecePointer = null;    // clear piece's old location
+            m_GameBoard[i_Piece.Location.X, i_Piece.Location.Y].CurrentPiece = null;    // clear piece's old location
             i_Piece.Location = i_To;                                                    // set piece's new location
-            m_GameBoard[i_To.X, i_To.Y].PiecePointer = i_Piece;                         // update the board of the piece's new location
+            m_GameBoard[i_To.X, i_To.Y].CurrentPiece = i_Piece;                         // update the board of the piece's new location
         }
 
         // Remove captured piece and update the board of the given capturing piece's new location and
         public void MoveCapturingPiece(Player i_CurrentPlayer, Player i_EnemyPlayer, Piece i_Piece, Point i_NewLocation)
         {
             Piece pieceToBeCaptured = m_GameBoard[(i_Piece.Location.X + i_NewLocation.X) / 2,
-                (i_Piece.Location.Y + i_NewLocation.Y) / 2].PiecePointer;
+                (i_Piece.Location.Y + i_NewLocation.Y) / 2].CurrentPiece;
 
             if (pieceToBeCaptured != null)
             {
                 // clear captured piece's old location
-                m_GameBoard[(i_Piece.Location.X + i_NewLocation.X) / 2, (i_Piece.Location.Y + i_NewLocation.Y) / 2].PiecePointer = null;
+                m_GameBoard[(i_Piece.Location.X + i_NewLocation.X) / 2, (i_Piece.Location.Y + i_NewLocation.Y) / 2].CurrentPiece = null;
                 // remove captured enemy piece from it's owner's pieces array
                 i_EnemyPlayer.Pieces.Remove(pieceToBeCaptured);
             }

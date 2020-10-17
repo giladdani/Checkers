@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
-namespace CheckersWinForms
+namespace CheckersLogic
 {
     public class Piece
     {
         // Private Members
         private readonly ePlayerSide r_Side;
-        private bool m_IsKing;
         private Point m_Location;
+        private bool m_IsKing;
 
         // Constructors
         public Piece(Point i_Location, ePlayerSide i_Side)
         {
-            m_IsKing = false;
-            m_Location = i_Location;
             r_Side = i_Side;
+            m_Location = i_Location;
+            m_IsKing = false;
         }
 
         // Public Methods
@@ -100,9 +100,9 @@ namespace CheckersWinForms
             if (MoveValidator.IsInBorders(i_Board, i_Move.ToRow, i_Move.ToCol))
             {
                 Piece pieceToBeCaptured =
-                    i_Board.GameBoard[(i_Move.FromRow + i_Move.ToRow) / 2, (i_Move.FromCol + i_Move.ToCol) / 2].PiecePointer;
+                    i_Board.GameBoard[(i_Move.FromRow + i_Move.ToRow) / 2, (i_Move.FromCol + i_Move.ToCol) / 2].CurrentPiece;
                 // check destination is empty
-                if (i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].PiecePointer == null)
+                if (i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].CurrentPiece == null)
                 {
                     if (pieceToBeCaptured != null)
                     {
@@ -122,11 +122,11 @@ namespace CheckersWinForms
             bool captureMove = false;
             if (MoveValidator.IsInBorders(i_Board, i_Move.ToRow, i_Move.ToCol))
             {
-                if (i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].PiecePointer == null)
+                if (i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].CurrentPiece == null)
                 {
-                    if(i_Board.GameBoard[i_Move.FromRow + 1, i_Move.FromCol + i_Direction].PiecePointer != null)
+                    if(i_Board.GameBoard[i_Move.FromRow + 1, i_Move.FromCol + i_Direction].CurrentPiece != null)
                     {
-                        if (i_Board.GameBoard[i_Move.FromRow + 1, i_Move.FromCol + i_Direction].PiecePointer.Side == MoveValidator.GetOtherSide(this.Side))
+                        if (i_Board.GameBoard[i_Move.FromRow + 1, i_Move.FromCol + i_Direction].CurrentPiece.Side == MoveValidator.GetOtherSide(this.Side))
                         {
                             captureMove = true;
                         }
@@ -140,22 +140,22 @@ namespace CheckersWinForms
         // Private Methods
         private void addSimpleMovesUpside(List<Move> i_MovesList, Board i_Board)
         {
-            if (MoveValidator.IsInBorders(i_Board, this.Location.X + 1, this.Location.Y + 1) && i_Board.GameBoard[this.Location.X + 1, this.Location.Y + 1].PiecePointer == null)
+            if (MoveValidator.IsInBorders(i_Board, this.Location.X + 1, this.Location.Y + 1) && i_Board.GameBoard[this.Location.X + 1, this.Location.Y + 1].CurrentPiece == null)
             {
                 i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y + 1, this.Location.X + 1));
             }
 
-            if (MoveValidator.IsInBorders(i_Board, this.Location.X + 1, this.Location.Y - 1) && i_Board.GameBoard[this.Location.X + 1, this.Location.Y - 1].PiecePointer == null)
+            if (MoveValidator.IsInBorders(i_Board, this.Location.X + 1, this.Location.Y - 1) && i_Board.GameBoard[this.Location.X + 1, this.Location.Y - 1].CurrentPiece == null)
             {
                 i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y - 1, this.Location.X + 1));
             }
 
             // Capture moves
             if (MoveValidator.IsInBorders(i_Board, this.Location.X + 2, this.Location.Y + 2)
-               && i_Board.GameBoard[this.Location.X + 2, this.Location.Y + 2].PiecePointer == null)
+               && i_Board.GameBoard[this.Location.X + 2, this.Location.Y + 2].CurrentPiece == null)
             {
-                if (i_Board.GameBoard[this.Location.X + 1, this.Location.Y + 1].PiecePointer != null
-                   && i_Board.GameBoard[this.Location.X + 1, this.Location.Y + 1].PiecePointer.Side
+                if (i_Board.GameBoard[this.Location.X + 1, this.Location.Y + 1].CurrentPiece != null
+                   && i_Board.GameBoard[this.Location.X + 1, this.Location.Y + 1].CurrentPiece.Side
                    == ePlayerSide.Down)
                 {
                     i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y + 2, this.Location.X + 2));
@@ -163,10 +163,10 @@ namespace CheckersWinForms
             }
 
             if (MoveValidator.IsInBorders(i_Board, this.Location.X + 2, this.Location.Y - 2)
-               && i_Board.GameBoard[this.Location.X + 2, this.Location.Y - 2].PiecePointer == null)
+               && i_Board.GameBoard[this.Location.X + 2, this.Location.Y - 2].CurrentPiece == null)
             {
-                if (i_Board.GameBoard[this.Location.X + 1, this.Location.Y - 1].PiecePointer != null
-                   && i_Board.GameBoard[this.Location.X + 1, this.Location.Y - 1].PiecePointer.Side
+                if (i_Board.GameBoard[this.Location.X + 1, this.Location.Y - 1].CurrentPiece != null
+                   && i_Board.GameBoard[this.Location.X + 1, this.Location.Y - 1].CurrentPiece.Side
                    == ePlayerSide.Down)
                 {
                     i_MovesList.Add(new Move(this.Location.Y, this.Location.X, this.Location.Y - 2, this.Location.X + 2));
@@ -205,7 +205,7 @@ namespace CheckersWinForms
 
             set
             {
-                m_IsKing = true;
+                m_IsKing = value;
             }
         }
     }

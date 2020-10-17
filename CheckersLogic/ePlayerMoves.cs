@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CheckersWinForms
+namespace CheckersLogic
 {
     public enum ePlayerMoves
     {

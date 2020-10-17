@@ -1,12 +1,10 @@
-﻿using System.Windows.Forms;
-
-namespace CheckersWinForms
+﻿namespace CheckersWinForms
 {
     public class Program
     {
         public static void Main()
         {
-            WinFormsUiManager ui = new WinFormsUiManager();
+            UiManager ui = new UiManager();
             ui.CreateGame();
             ui.StartGame();
         }

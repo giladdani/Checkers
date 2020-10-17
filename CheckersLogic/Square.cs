@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CheckersWinForms
+namespace CheckersLogic
 {
     public class Square
     {
@@ -8,7 +8,7 @@ namespace CheckersWinForms
         public event Action<Square> CurrentPieceChanged;
 
         // Private Members
-        private Piece m_PiecePointer;
+        private Piece m_CurrentPiece;
         private int m_MatrixRowIndex;
         private int m_MatrixColIndex;
 
@@ -17,20 +17,20 @@ namespace CheckersWinForms
         {
             m_MatrixRowIndex = i_Row;
             m_MatrixColIndex = i_Col;
-            PiecePointer = null;
+            CurrentPiece = null;
         }
 
         // Properties
-        public Piece PiecePointer
+        public Piece CurrentPiece
         {
             get
             {
-                return m_PiecePointer;
+                return m_CurrentPiece;
             }
 
             set
             {
-                m_PiecePointer = value;
+                m_CurrentPiece = value;
                 if(CurrentPieceChanged != null)
                 {
                     CurrentPieceChanged.Invoke(this);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace CheckersWinForms
+namespace CheckersLogic
 {
     public class MoveValidator
     {
@@ -68,13 +68,13 @@ namespace CheckersWinForms
             bool isCaptureMovePossible = false;
             ePlayerSide opponentSide = GetOtherSide(i_Side);
 
-            if (IsInBorders(i_Board, i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction) && i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction].PiecePointer != null)
+            if (IsInBorders(i_Board, i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction) && i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction].CurrentPiece != null)
             {
-                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction].PiecePointer.Side == opponentSide)
+                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction].CurrentPiece.Side == opponentSide)
                 {
                     if (IsInBorders(i_Board, i_Piece.Location.X + (2 * i_Direction), i_Piece.Location.Y - (2 * i_Direction)))
                     {
-                        if (i_Board.GameBoard[i_Piece.Location.X + (2 * i_Direction), i_Piece.Location.Y - (2 * i_Direction)].PiecePointer == null)
+                        if (i_Board.GameBoard[i_Piece.Location.X + (2 * i_Direction), i_Piece.Location.Y - (2 * i_Direction)].CurrentPiece == null)
                         {
                             isCaptureMovePossible = true;
                         }
@@ -82,13 +82,13 @@ namespace CheckersWinForms
                 }
             }
 
-            if (IsInBorders(i_Board, i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction) && i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction].PiecePointer != null)
+            if (IsInBorders(i_Board, i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction) && i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction].CurrentPiece != null)
             {
-                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction].PiecePointer.Side == opponentSide)
+                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction].CurrentPiece.Side == opponentSide)
                 {
                     if (IsInBorders(i_Board, i_Piece.Location.X + (2 * i_Direction), i_Piece.Location.Y + (2 * i_Direction)))
                     {
-                        if (i_Board.GameBoard[i_Piece.Location.X + (2 * i_Direction), i_Piece.Location.Y + (2 * i_Direction)].PiecePointer == null)
+                        if (i_Board.GameBoard[i_Piece.Location.X + (2 * i_Direction), i_Piece.Location.Y + (2 * i_Direction)].CurrentPiece == null)
                         {
                             isCaptureMovePossible = true;
                         }
@@ -120,7 +120,7 @@ namespace CheckersWinForms
 
             if (isDestinationInBorders)
             {
-                bool isDestinationEmpty = i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].PiecePointer == null;
+                bool isDestinationEmpty = i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].CurrentPiece == null;
                 if(isDestinationEmpty)
                 {
                     return isSimpleMovePossible(i_Player, i_Board, i_Move);
@@ -133,7 +133,7 @@ namespace CheckersWinForms
         private static bool isSimpleMovePossible(Player i_Player, Board i_Board, Move i_Move)
         {
             bool isPossible = false;
-            Piece movingPiece = i_Board.GameBoard[i_Move.FromRow, i_Move.FromCol].PiecePointer;
+            Piece movingPiece = i_Board.GameBoard[i_Move.FromRow, i_Move.FromCol].CurrentPiece;
 
             if (movingPiece != null)
             {
@@ -166,13 +166,13 @@ namespace CheckersWinForms
         public static bool IsCaptureMovePossible(Player i_Player, Board i_Board, Move i_Move)
         {
             bool isCaptureMovePossible = false;
-            Piece currentPiece = i_Board.GameBoard[i_Move.FromRow, i_Move.FromCol].PiecePointer;
-            Piece pieceToBeCaptured = i_Board.GameBoard[(i_Move.FromRow + i_Move.ToRow) / 2, (i_Move.FromCol + i_Move.ToCol) / 2].PiecePointer;
+            Piece currentPiece = i_Board.GameBoard[i_Move.FromRow, i_Move.FromCol].CurrentPiece;
+            Piece pieceToBeCaptured = i_Board.GameBoard[(i_Move.FromRow + i_Move.ToRow) / 2, (i_Move.FromCol + i_Move.ToCol) / 2].CurrentPiece;
 
             if (currentPiece != null && IsInBorders(i_Board, i_Move.ToRow, i_Move.ToCol))
             {
                 // is destination empty
-                if (i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].PiecePointer == null)
+                if (i_Board.GameBoard[i_Move.ToRow, i_Move.ToCol].CurrentPiece == null)
                 {
                     if (i_Player.Side == ePlayerSide.Down)
                     {
@@ -241,7 +241,7 @@ namespace CheckersWinForms
 
             if (IsInBorders(i_Board, i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction))
             {
-                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction].PiecePointer == null)
+                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y + i_Direction].CurrentPiece == null)
                 {
                     isPieceHavePossibleMove = true;
                 }
@@ -249,7 +249,7 @@ namespace CheckersWinForms
 
             if (IsInBorders(i_Board, i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction))
             {
-                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction].PiecePointer == null)
+                if (i_Board.GameBoard[i_Piece.Location.X + i_Direction, i_Piece.Location.Y - i_Direction].CurrentPiece == null)
                 {
                     isPieceHavePossibleMove = true;
                 }

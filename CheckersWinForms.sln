@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.902
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckersLogic", "CheckersLogic\CheckersLogic.csproj", "{5A8E7039-4583-4B73-82BC-7E07AEF5951E}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckersWinForms", "CheckersWinForms\CheckersWinForms.csproj", "{CA237A41-225C-422A-82B0-B09E629653F1}"
 EndProject
 Global
@@ -11,6 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5A8E7039-4583-4B73-82BC-7E07AEF5951E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A8E7039-4583-4B73-82BC-7E07AEF5951E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A8E7039-4583-4B73-82BC-7E07AEF5951E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A8E7039-4583-4B73-82BC-7E07AEF5951E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CA237A41-225C-422A-82B0-B09E629653F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CA237A41-225C-422A-82B0-B09E629653F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA237A41-225C-422A-82B0-B09E629653F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
